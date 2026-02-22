@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XFeat Vision Lab — Object Matching Platform</title>
+  <meta name="description"
+    content="AI-powered object matching in videos using XFeat (CVPR 2024). Find, count, and replace objects in any video." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ── Animated background ── -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ── Nav ── -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">XFeat Vision Lab</span>
+    </div>
+    <div class="nav-badge">CVPR 2024</div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Accelerated Feature Matching</div>
+      <h1>Object Intelligence<br /><span class="gradient-text">Meets Video</span></h1>
+      <p class="hero-sub">Upload any object photo + video. XFeat instantly locates, counts,<br />or replaces your object
+        — frame by frame.</p>
+      <div class="hero-features">
+        <span class="hf-pill">🔍 Locate</span>
+        <span class="hf-pill">🔢 Count</span>
+        <span class="hf-pill">🎭 Replace</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Feature Tabs ── -->
+  <main class="main-container">
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="find" id="tab-find">
+        <span class="tab-icon">🔍</span>
+        <span>Find Object</span>
+        <span class="tab-sub">Locate &amp; timestamp</span>
+      </button>
+      <button class="tab-btn" data-tab="count" id="tab-count">
+        <span class="tab-icon">🔢</span>
+        <span>Count Appearances</span>
+        <span class="tab-sub">How many times shown</span>
+      </button>
+      <button class="tab-btn" data-tab="replace" id="tab-replace">
+        <span class="tab-icon">🎭</span>
+        <span>Replace Object</span>
+        <span class="tab-sub">AR substitution</span>
+      </button>
+    </div>
+
+    <!-- ══ PANEL 1: Find Object ══ -->
+    <div class="panel active" id="panel-find">
+      <div class="panel-header">
+        <h2>🔍 Find Object in Video</h2>
+        <p>Upload an object photo and a video. XFeat will scan every frame and pinpoint the <strong>exact
+            timestamp</strong> where your object appears most clearly.</p>
+      </div>
+      <div class="upload-grid">
+        <!-- Image upload — label wraps input natively -->
+        <label class="drop-zone" id="dz-find-img" for="inp-find-img">
+          <div class="dz-inner">
+            <div class="dz-icon">📸</div>
+            <div class="dz-label">Object Photo</div>
+            <div class="dz-hint">Click to browse — PNG / JPG / JPEG</div>
+          </div>
+          <input type="file" id="inp-find-img" accept="image/*" />
+          <div class="dz-preview" id="prev-find-img"></div>
+        </label>
+        <!-- Video upload -->
+        <label class="drop-zone" id="dz-find-vid" for="inp-find-vid">
+          <div class="dz-inner">
+            <div class="dz-icon">🎬</div>
+            <div class="dz-label">Target Video</div>
+            <div class="dz-hint">Click to browse — MP4 / AVI / MOV</div>
+          </div>
+          <input type="file" id="inp-find-vid" accept="video/*" />
+          <div class="dz-preview" id="prev-find-vid"></div>
+        </label>
+      </div>
+      <button class="action-btn" id="btn-find">
+        <span class="btn-icon">⚡</span> Find Object
+      </button>
+      <div class="progress-wrap hidden" id="prog-find">
+        <div class="progress-label">XFeat scanning frames…</div>
+        <div class="progress-track">
+          <div class="progress-bar" id="pbar-find"></div>
+        </div>
+        <div class="progress-pct" id="ppct-find">0%</div>
+      </div>
+      <div class="result-card hidden" id="result-find">
+        <div class="result-header">
+          <span class="result-status" id="res-find-status"></span>
+        </div>
+        <div class="result-body">
+          <div class="result-stats" id="res-find-stats"></div>
+          <div class="result-preview-wrap">
+            <div class="result-label">Best Matching Frame</div>
+            <img id="res-find-img" class="result-img" src="" alt="Best matching frame" />
+          </div>
+          <div class="top-timestamps" id="res-find-top"></div>
+        </div>
+        <div class="chart-section">
+          <div class="chart-label">Match Score Over Video Timeline</div>
+          <canvas id="chart-find" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL 2: Count Appearances ══ -->
+    <div class="panel" id="panel-count">
+      <div class="panel-header">
+        <h2>🔢 Count Object Appearances</h2>
+        <p>XFeat tracks when the object enters and leaves frame. Each <strong>appear → disappear</strong> cycle counts
+          as one appearance.</p>
+      </div>
+      <div class="upload-grid">
+        <label class="drop-zone" id="dz-count-img" for="inp-count-img">
+          <div class="dz-inner">
+            <div class="dz-icon">📸</div>
+            <div class="dz-label">Object Photo</div>
+            <div class="dz-hint">Click to browse — PNG / JPG / JPEG</div>
+          </div>
+          <input type="file" id="inp-count-img" accept="image/*" />
+          <div class="dz-preview" id="prev-count-img"></div>
+        </label>
+        <label class="drop-zone" id="dz-count-vid" for="inp-count-vid">
+          <div class="dz-inner">
+            <div class="dz-icon">🎬</div>
+            <div class="dz-label">Target Video</div>
+            <div class="dz-hint">Click to browse — MP4 / AVI / MOV</div>
+          </div>
+          <input type="file" id="inp-count-vid" accept="video/*" />
+          <div class="dz-preview" id="prev-count-vid"></div>
+        </label>
+      </div>
+      <button class="action-btn" id="btn-count">
+        <span class="btn-icon">⚡</span> Count Appearances
+      </button>
+      <div class="progress-wrap hidden" id="prog-count">
+        <div class="progress-label">XFeat analysing appearances…</div>
+        <div class="progress-track">
+          <div class="progress-bar" id="pbar-count"></div>
+        </div>
+        <div class="progress-pct" id="ppct-count">0%</div>
+      </div>
+      <div class="result-card hidden" id="result-count">
+        <div class="result-header">
+          <div class="big-count-wrap">
+            <div class="big-count" id="res-count-number">0</div>
+            <div class="big-count-label">Appearances Detected</div>
+          </div>
+        </div>
+        <div class="appearances-list" id="res-appearances"></div>
+        <div class="chart-section">
+          <div class="chart-label">Match Score Over Video Timeline</div>
+          <canvas id="chart-count" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL 3: Replace Object ══ -->
+    <div class="panel" id="panel-replace">
+      <div class="panel-header">
+        <h2>🎭 Replace Object in Video</h2>
+        <p>XFeat finds the object in each frame, then <strong>warps your replacement image</strong> onto exactly that
+          region — producing a new video.</p>
+      </div>
+      <div class="upload-grid triple">
+        <label class="drop-zone" id="dz-repl-img" for="inp-repl-img">
+          <div class="dz-inner">
+            <div class="dz-icon">📸</div>
+            <div class="dz-label">Object to Find</div>
+            <div class="dz-hint">Reference photo</div>
+          </div>
+          <input type="file" id="inp-repl-img" accept="image/*" />
+          <div class="dz-preview" id="prev-repl-img"></div>
+        </label>
+        <label class="drop-zone" id="dz-repl-sub" for="inp-repl-sub">
+          <div class="dz-inner">
+            <div class="dz-icon">🖼️</div>
+            <div class="dz-label">Replacement Image</div>
+            <div class="dz-hint">Will be placed over object</div>
+          </div>
+          <input type="file" id="inp-repl-sub" accept="image/*" />
+          <div class="dz-preview" id="prev-repl-sub"></div>
+        </label>
+        <label class="drop-zone" id="dz-repl-vid" for="inp-repl-vid">
+          <div class="dz-inner">
+            <div class="dz-icon">🎬</div>
+            <div class="dz-label">Target Video</div>
+            <div class="dz-hint">MP4 / AVI / MOV</div>
+          </div>
+          <input type="file" id="inp-repl-vid" accept="video/*" />
+          <div class="dz-preview" id="prev-repl-vid"></div>
+        </label>
+      </div>
+      <button class="action-btn" id="btn-replace">
+        <span class="btn-icon">⚡</span> Generate Replaced Video
+      </button>
+      <div class="progress-wrap hidden" id="prog-replace">
+        <div class="progress-label">XFeat replacing object frame by frame…</div>
+        <div class="progress-track">
+          <div class="progress-bar" id="pbar-replace"></div>
+        </div>
+        <div class="progress-pct" id="ppct-replace">0%</div>
+      </div>
+      <div class="result-card hidden" id="result-replace">
+        <div class="result-header">
+          <span class="result-status success">✅ Replacement Complete!</span>
+        </div>
+        <div class="result-body">
+          <div class="result-stats" id="res-replace-stats"></div>
+          <div class="result-preview-wrap">
+            <div class="result-label">Output Video</div>
+            <video id="res-replace-video" class="result-video" controls></video>
+          </div>
+          <a class="download-btn" id="res-replace-dl" href="#" download>⬇ Download Video</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <p>Powered by <strong>XFeat</strong> (CVPR 2024) · <a href="https://github.com/verlab/accelerated_features"
+        target="_blank">verlab/accelerated_features</a></p>
+  </footer>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
