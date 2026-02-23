@@ -220,7 +220,7 @@ document.getElementById("btn-find").addEventListener("click", async () => {
     );
   } catch (e) {
     btn.disabled = false;
-    showError("Cannot reach backend. Is the server running at localhost:5000?");
+    showError(`Cannot reach backend at: ${API}`);
   }
 });
 
@@ -400,7 +400,7 @@ document.getElementById("btn-replace").addEventListener("click", async () => {
     );
   } catch (e) {
     btn.disabled = false;
-    showError("Cannot reach backend. Is the server running at localhost:5000?");
+    showError(`Cannot reach backend at: ${API}`);
   }
 });
 
