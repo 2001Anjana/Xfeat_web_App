@@ -4,7 +4,12 @@
             job polling, Chart.js rendering, results
    ═══════════════════════════════════════════════════ */
 
-const API = "http://localhost:5000/api";
+// ─── API Configuration ────────────────────────────
+// For local development: leave AZURE_URL as empty string ""
+// For Azure deployment:  set AZURE_URL to your App Service URL
+const AZURE_URL = "";  // e.g. "https://xfeat-webapp.azurewebsites.net"
+const API = (AZURE_URL || "http://localhost:5000") + "/api";
+
 
 // ─── Tab switching ────────────────────────────────
 document.querySelectorAll(".tab-btn").forEach(btn => {
