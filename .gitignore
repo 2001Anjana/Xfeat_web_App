@@ -1,0 +1,47 @@
+# ─── Runtime-generated folders ───────────────────────
+backend/uploads/
+backend/outputs/
+
+# ─── XFeat repo (cloned by setup.ps1, not yours to commit) ───
+backend/accelerated_features/
+
+# ─── Python ───────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ─── Virtual environments ─────────────────────────────
+venv/
+.venv/
+env/
+.env/
+
+# ─── Environment variables ────────────────────────────
+.env
+*.env.local
+
+# ─── PyTorch / model cache ────────────────────────────
+*.pt
+*.pth
+*.onnx
+
+# ─── OS files ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDE files ────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ─── Logs ─────────────────────────────────────────────
+*.log
+*.log.*
