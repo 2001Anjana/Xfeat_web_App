@@ -7,7 +7,7 @@
 // ─── API Configuration ────────────────────────────
 // For local development: leave AZURE_URL as empty string ""
 // For Azure deployment:  set AZURE_URL to your App Service URL
-const AZURE_URL = "";  // e.g. "https://xfeat-webapp.azurewebsites.net"
+const AZURE_URL = "https://xfeat-webapp.azurewebsites.net";  // e.g. "https://xfeat-webapp.azurewebsites.net"
 const API = (AZURE_URL || "http://localhost:5000") + "/api";
 
 
