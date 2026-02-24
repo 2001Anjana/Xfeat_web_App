@@ -98,3 +98,6 @@ python app.py
 
 - [XFeat: Accelerated Features for Lightweight Image Matching — CVPR 2024](https://arxiv.org/abs/2404.19174)
 - [verlab/accelerated_features](https://github.com/verlab/accelerated_features)
+
+## Access the Web APP
+-[https://xfeat-web-app.vercel.app]
