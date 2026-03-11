@@ -11,6 +11,8 @@ import numpy as np
 import torch
 import base64
 import json
+import subprocess
+import shutil
 from io import BytesIO
 from PIL import Image
 from pathlib import Path
@@ -433,13 +435,10 @@ def replace_object_in_video(query_path: str, video_path: str,
     vid_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frame_skip = max(1, int(fps // frame_skip_factor))
 
-    # Use H.264 (avc1) for browser-compatible playback; fall back to mp4v if unavailable
-    fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    writer = cv2.VideoWriter(output_path, fourcc, fps, (vid_w, vid_h))
-    if not writer.isOpened():
-        print("[WARN] avc1 codec unavailable, falling back to mp4v (may not play in browser)")
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        writer = cv2.VideoWriter(output_path, fourcc, fps, (vid_w, vid_h))
+    # Write to a temporary file first, then re-encode with FFmpeg for browser compatibility
+    temp_output = output_path + ".tmp.mp4"
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    writer = cv2.VideoWriter(temp_output, fourcc, fps, (vid_w, vid_h))
 
     frames_replaced = 0
     frame_idx = 0
@@ -509,6 +508,35 @@ def replace_object_in_video(query_path: str, video_path: str,
 
     cap.release()
     writer.release()
+
+    # ── Re-encode with FFmpeg to H.264 for browser-compatible playback ──
+    ffmpeg_bin = shutil.which("ffmpeg")
+    if ffmpeg_bin:
+        try:
+            cmd = [
+                ffmpeg_bin, "-y", "-i", temp_output,
+                "-c:v", "libx264",
+                "-preset", "fast",
+                "-crf", "23",
+                "-pix_fmt", "yuv420p",
+                "-movflags", "+faststart",
+                output_path,
+            ]
+            print(f"[FFmpeg] Re-encoding for browser: {' '.join(cmd)}")
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            if result.returncode == 0:
+                os.remove(temp_output)
+                print("[FFmpeg] Re-encoding complete — H.264 browser-ready video created.")
+            else:
+                print(f"[FFmpeg] Failed (rc={result.returncode}): {result.stderr[:500]}")
+                # Fall back to the raw OpenCV output
+                shutil.move(temp_output, output_path)
+        except Exception as e:
+            print(f"[FFmpeg] Error during re-encoding: {e}")
+            shutil.move(temp_output, output_path)
+    else:
+        print("[WARN] FFmpeg not found — video may not play in browser.")
+        shutil.move(temp_output, output_path)
 
     return {
         "output_path": output_path,

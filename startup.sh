@@ -30,7 +30,16 @@ fi
 # 2. Create runtime dirs
 mkdir -p "$BACKEND_DIR/uploads" "$BACKEND_DIR/outputs"
 
-# 3. Start Gunicorn (packages already installed by Azure Oryx)
+# 3. Install FFmpeg for browser-compatible H.264 video encoding
+if ! command -v ffmpeg &> /dev/null; then
+    echo "[2.5/3] Installing FFmpeg..."
+    apt-get update -qq && apt-get install -y -qq ffmpeg
+    echo "[2.5/3] FFmpeg installed OK"
+else
+    echo "[2.5/3] FFmpeg already installed. Skipping."
+fi
+
+# 4. Start Gunicorn (packages already installed by Azure Oryx)
 echo "[2/2] Starting Gunicorn on port 8000..."
 cd "$BACKEND_DIR"
 exec gunicorn \
