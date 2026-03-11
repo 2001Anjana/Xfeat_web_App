@@ -422,10 +422,26 @@ function renderReplaceResult(r, jobId) {
   const filename = pathParts[pathParts.length - 1];
   const videoUrl = `${API}/video/${filename}`;
 
-  // Set video player src
+  // Fetch video as blob and use blob URL for the player
+  // This avoids cross-origin streaming issues that prevent <video> from playing
   const videoEl = document.getElementById("res-replace-video");
-  videoEl.src = videoUrl;
-  videoEl.load();
+  videoEl.removeAttribute("src");
+  videoEl.innerHTML = "<p style='color:#8892b0;padding:16px;text-align:center'>Loading video…</p>";
+
+  fetch(videoUrl)
+    .then(resp => {
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return resp.blob();
+    })
+    .then(blob => {
+      const blobUrl = URL.createObjectURL(blob);
+      videoEl.innerHTML = "";
+      videoEl.src = blobUrl;
+      videoEl.load();
+    })
+    .catch(err => {
+      videoEl.innerHTML = `<p style='color:#ff6b6b;padding:16px;text-align:center'>Could not load video preview: ${err.message}</p>`;
+    });
 
   // Fix download button: use fetch → blob → click to bypass cross-origin restriction
   const dlBtn = document.getElementById("res-replace-dl");

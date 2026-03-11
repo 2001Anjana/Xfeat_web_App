@@ -510,7 +510,17 @@ def replace_object_in_video(query_path: str, video_path: str,
     writer.release()
 
     # ── Re-encode with FFmpeg to H.264 for browser-compatible playback ──
-    ffmpeg_bin = shutil.which("ffmpeg")
+    # Try imageio-ffmpeg bundled binary first, then system path
+    ffmpeg_bin = None
+    try:
+        import imageio_ffmpeg
+        ffmpeg_bin = imageio_ffmpeg.get_ffmpeg_exe()
+        print(f"[FFmpeg] Found via imageio-ffmpeg: {ffmpeg_bin}")
+    except (ImportError, Exception):
+        ffmpeg_bin = shutil.which("ffmpeg")
+        if ffmpeg_bin:
+            print(f"[FFmpeg] Found on system PATH: {ffmpeg_bin}")
+
     if ffmpeg_bin:
         try:
             cmd = [
